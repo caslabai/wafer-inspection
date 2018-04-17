@@ -13,7 +13,8 @@ mkdir logs/train/tfbord
 mkdir logs/train/timeline
 mkdir logs/test/tfbord
 mkdir logs/test/timeline
-`
+`<br>
+
 Execute `pkl2tfrecord.py` in `dataset` to build dataset, or use the sub dataset We provide in this repo<br>
 Execute `model_train.py` to start training. But make sure your dataset is place on the right `TRRECORD_PATH`<br>
 Execute `model_restore_wafer.py` can get the trained model to do the final test.<br>
