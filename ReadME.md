@@ -2,7 +2,9 @@ This repo provide a wafer-inseption pototype include all tensorflow profiler too
 You can also use NVprofiler(.nvvp) to moniter your model performance without overhead.<br>
 
 You can easiely import an other neural network to your application by modify `model_zoo`.
-The coding style is friendly for beginer.
+The coding style is friendly for beginer.<br>
+
+run under: python 2.7 in tensorflow1.4 cudnn6.1 cuda8.0<br>
 
 # Get start
 
