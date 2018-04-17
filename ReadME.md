@@ -7,13 +7,13 @@ The coding style is friendly for beginer.
 # Get start
 
 Few folder for log info. you need to build.<br>
-`
-mkdir logs/train/meta
-mkdir logs/train/tfbord
-mkdir logs/train/timeline
-mkdir logs/test/tfbord
-mkdir logs/test/timeline
-`<br>
+
+`mkdir logs/train/meta`  <br>
+`mkdir logs/train/tfbord` <br>
+`mkdir logs/train/timeline` <br>
+`mkdir logs/test/tfbord` <br>
+`mkdir logs/test/timeline`<br>
+<br>
 
 Execute `pkl2tfrecord.py` in `dataset` to build dataset, or use the sub dataset We provide in this repo<br>
 Execute `model_train.py` to start training. But make sure your dataset is place on the right `TRRECORD_PATH`<br>
