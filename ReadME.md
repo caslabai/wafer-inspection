@@ -27,14 +27,14 @@ We provide a `pkl2tfrecord.py` script in `dataset`
 After turn dataset into tfrecord, you can start your training.
 
 # profiler
-for tensorflow timeline <br>
+## tensorflow timeline <br>
 use chrome for`chrome://tracing`, load file `logs/test/timeline` <br>
 
-for tensorboard <br>
+## tensorboard <br>
 use cmd in `logs/test/tfbord`  <br>
 `tensorboard --logdir=./` <br>
 use browser goto `localhost:6006`<br> 
 
-for nvprof (nvidia virtual profiler)<br>
+## nvprof (nvidia virtual profiler)<br>
 `nvprof [-f] -o ./logs/nvvp/name.nvvp python model_train.py`<br>
 <br>
