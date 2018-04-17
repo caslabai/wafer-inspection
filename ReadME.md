@@ -1,4 +1,5 @@
-This repo provide a wafer-inseption pototype include all tensorflow profiler tools.(tensorboard, timeline)
+This repo provide a wafer-inseption pototype include all tensorflow profiler tools.(tensorboard, timeline)<br>
+PS. Loging hardware message by timline cause huge overhead, pls turn it off if you don't need it.<br>
 You can also use NVprofiler(.nvvp) to moniter your model performance without overhead.<br>
 
 You can easiely import an other neural network to your application by modify `model_zoo`.
