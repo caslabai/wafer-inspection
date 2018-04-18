@@ -11,11 +11,11 @@ run under: python 2.7 in tensorflow1.4 cudnn6.1 cuda8.0<br>
 
 Few folder for log info. you need to build.<br>
 
-`mkdir logs/train/meta`  <br>
-`mkdir logs/train/tfbord` <br>
-`mkdir logs/train/timeline` <br>
-`mkdir logs/test/tfbord` <br>
-`mkdir logs/test/timeline`<br>
+`mkdir -p logs/train/meta`  <br>
+`mkdir -p logs/train/tfbord` <br>
+`mkdir -p logs/train/timeline` <br>
+`mkdir -p logs/test/tfbord` <br>
+`mkdir -p logs/test/timeline`<br>
 <br>
 
 Execute `pkl2tfrecord.py` in `dataset` to build dataset, or use the sub dataset We provide in this repo<br>
