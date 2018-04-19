@@ -92,7 +92,7 @@ for j in range(epec):
                 run_metadata = run_metadata
                 )
         #get timeline for each batch
-        # #train_writer.add_run_metadata(run_metadata,'step%d' %(i+j*train_data_index))
+        train_writer.add_run_metadata(run_metadata,'step%d' %(i+j*train_data_index))
         train_writer.add_summary(summary,(i+j*train_data_index))#record summary
         fetched_timeline = timeline.Timeline(run_metadata.step_stats)
         chrome_trace = fetched_timeline.generate_chrome_trace_format()
