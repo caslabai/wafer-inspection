@@ -20,7 +20,8 @@ def wnet(images,OUTPUT_CLASS):
     net = slim.max_pool2d(net, [2,2], scope='pool3')
     net = slim.flatten(net, scope='flatten3')
     net = slim.fully_connected(net, 500, scope='fc4')
-    net = slim.fully_connected(net, OUTPUT_CLASS, activation_fn=None, scope='fc5')
+    net = slim.dropout(net, 0.5, is_training=True,scope='dropout5')
+    net = slim.fully_connected(net, OUTPUT_CLASS, activation_fn=None, scope='fc6')
     return net
 
 def lenet(images,OUTPUT_CLASS):

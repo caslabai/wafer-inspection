@@ -26,29 +26,52 @@ from TimeLiner import *
 config = tf.ConfigProto()
 #config.gpu_options.per_process_gpu_memory_fraction = 0.9
 config.gpu_options.allow_growth = True
+wafer = Wafer()
 
 #%%
-wafer = Wafer()
-RESHAPE_LEN=100
-OUTPUT_CLASS = 9  # number 1 to 10 data
+TEST_START =0#100000
+TEST_BATCH=1000
+train_index=10000
+
+
+#%% to match training model
+RESHAPE_LEN=150 #vgg:224   
+OUTPUT_CLASS = 9 # number 1 to 10 data
+TMP=''#'TMP__'
+model_name='inception/'#'vgg16'#'inception_v4'
+dataset = 'FULL'#'sub7000' #sub7000
+RECORD_LAP=50
+epec=80
+train_data_index=10000
+#test_data_offset=1000
+batch_size =16
+
+
+log_name=model_name +"std_%dtraindata_%de_%dbatch_%dinputsize" %( train_data_index,epec,batch_size,RESHAPE_LEN )
+meta_graph_path='./logs/train/meta/'+TMP+ log_name+'.meta'
+checkpoint_path='./logs/train/meta/'+model_name
+tfevent_path =  './logs/test/tfboard/'+TMP+log_name
+timeline_path = './logs/test/timeline/wnet_'+dataset+'_training.json'
+TFRECORD_PATH = '../dataset/tfrecord/LSWMD_'+dataset+'.tfrecords'
+
+
+'''
+meta_path ="./logs/train/meta/wnet/10000traindata_80e_16batch_100inputsize.meta"
 timeline_path ='./logs/test/timeline/_test_timeline.ctf.json'
-meta_path ="./logs/train/meta/my-model2.meta"
 checkp_path='./logs/train/meta'
 tfevent_path = "./logs/test/tfboard/"
 
 #%% read dataset
-TFRECORD_PATH='/home/franksai/ai/datasets/wafer/tfrecord/LSWMD_sub7000.tfrecords'
+TFRECORD_PATH='../dataset/tfrecord/LSWMD_FULL.tfrecords'
+'''
 wafer = read_tfrecord(TFRECORD_PATH,wafer,RESHAPE_LEN,OUTPUT_CLASS)
-#%%
-TEST_START =0#100000
-TEST_BATCH=2000
 
 total_result=[]
 
 with tf.Session(config=config) as sess:
 
-    saver = tf.train.import_meta_graph(meta_path)
-    saver.restore(sess,tf.train.latest_checkpoint(checkp_path))
+    saver = tf.train.import_meta_graph(meta_graph_path)
+    saver.restore(sess,tf.train.latest_checkpoint(checkpoint_path))
     net = tf.get_default_graph()
 
     input_P  = net.get_tensor_by_name('input_P:0')
@@ -71,9 +94,9 @@ with tf.Session(config=config) as sess:
         result=[]
         for max_arg in wafer.label[TEST_START:TEST_START+TEST_BATCH]:
             result.append(max_arg.argmax())
-        tmp = np.array(result) == np.array(predict)
+        tmp =( np.array(result) == np.array(predict))
         total_result.append( tmp.mean() )
-        print "at step%d, total_accuracy: %.5f r_lenth: %d" %( i*2000,np.array(total_result).mean() , len(total_result) )
+        print "at step%d, total_accuracy: %.5f r_lenth: %d" %( i*TEST_BATCH ,np.array(total_result).mean() , len(total_result) )
         
         fetched_timeline = timeline.Timeline(run_metadata.step_stats)
         chrome_trace = fetched_timeline.generate_chrome_trace_format()
@@ -82,8 +105,8 @@ with tf.Session(config=config) as sess:
     tf.summary.FileWriter(tfevent_path, sess.graph)
     many_runs_timeline.save(timeline_path )
     
-    print "train accuracy: ",np.array(total_result[:2]).mean()
-    print "test accuracy:  ",np.array(total_result[2:nround]).mean()
+    print "train accuracy: ",np.array(total_result[: (train_index/TEST_BATCH) ]).mean()
+    print "test accuracy:  ",np.array(total_result[(train_index/TEST_BATCH) : nround]).mean()
 
 
 

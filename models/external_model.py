@@ -69,7 +69,7 @@ def read_tfrecord(TFRECORD_PATH,wafer,RESHAPE_LEN,OUTPUT_CLASS):
         wafer.label.append( np.array(label_1d).reshape((1,OUTPUT_CLASS))  )
         label_1d[tmp]=0
         i = i+1
-        if i % 400 == 0:
+        if i % 1000 == 0:
             print "data loading... index%d"% i 
     wafer.label = np.vstack(wafer.label)
     wafer.img   = np.vstack(wafer.img)
