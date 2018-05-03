@@ -51,7 +51,11 @@ use browser goto `localhost:6006`<br>
                    train accuracy:  0.9894
                    test accuracy:   0.948283950617
   
-           wnet 82 epec
+      70000 training data 10w testing data
+           resnet 50 epec
+                   train accuracy:  0.9894
+                   test accuracy:   0.948283950617
+            wnet 82 epec
                    train accuracy:  0.9977
                    test accuracy:   0.973216049383
   
