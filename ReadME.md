@@ -44,7 +44,8 @@ use browser goto `localhost:6006`<br>
 
 # Current result
 accuracy up to 97% <br>
-` 70000 training data 10w testing data
+` 
+70000 training data 10w testing data
            resnet 50 epec
                    train accuracy:  0.9894
                    test accuracy:   0.948283950617
