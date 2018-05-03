@@ -41,3 +41,19 @@ use browser goto `localhost:6006`<br>
 ## nvprof (nvidia virtual profiler)<br>
 `nvprof [-f] -o ./logs/nvvp/name.nvvp python model_train.py`<br>
 <br>
+
+# Current result
+accuracy up to 97% <br>
+` 70000 training data 10w testing data
+           resnet 50 epec
+                   train accuracy:  0.9894
+                   test accuracy:   0.948283950617
+  
+           wnet 82 epec
+                   train accuracy:  0.9977
+                   test accuracy:   0.973216049383
+  
+          inception_v4
+                  train accuracy:  0.9937
+                  test accuracy:   0.975475308642
+`
