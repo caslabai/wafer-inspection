@@ -11,11 +11,11 @@ run under: python 2.7 in tensorflow1.4 cudnn6.1 cuda8.0<br>
 
 Few folder for log info. you need to build.<br>
 
-`mkdir logs/train/meta`  <br>
-`mkdir logs/train/tfbord` <br>
-`mkdir logs/train/timeline` <br>
-`mkdir logs/test/tfbord` <br>
-`mkdir logs/test/timeline`<br>
+`mkdir -p logs/train/meta`  <br>
+`mkdir -p logs/train/tfbord` <br>
+`mkdir -p logs/train/timeline` <br>
+`mkdir -p logs/test/tfbord` <br>
+`mkdir -p logs/test/timeline`<br>
 <br>
 
 Execute `pkl2tfrecord.py` in `dataset` to build dataset, or use the sub dataset We provide in this repo<br>
@@ -41,3 +41,22 @@ use browser goto `localhost:6006`<br>
 ## nvprof (nvidia virtual profiler)<br>
 `nvprof [-f] -o ./logs/nvvp/name.nvvp python model_train.py`<br>
 <br>
+
+# Current result
+ #accuracy up to 97% 
+ 
+`
+           
+  
+      70000 training data 10w testing data
+           resnet 50 epec
+                   train accuracy:  0.9894
+                   test accuracy:   0.948283950617
+            wnet 82 epec
+                   train accuracy:  0.9977
+                   test accuracy:   0.973216049383
+  
+          inception_v4
+                  train accuracy:  0.9937
+                  test accuracy:   0.975475308642
+`

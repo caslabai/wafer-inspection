@@ -144,6 +144,7 @@ merged = tf.summary.merge_all()
 step = train_data_index / batch_size
 
 for j in range(epec):
+    #<<<<<<< HEAD
     #for i in range(train_data_index):
     for i in range(step):
 	#ran_index = i  + randint(0,50)
@@ -189,8 +190,32 @@ for j in range(epec):
 
 
 
+    '''
+    =======
+    for i in range(train_data_index):
+        ran_index = i +randint(0,99)
+        summary, _ = sess.run([merged,train_step],
+                feed_dict = {xs: wafer.img[ran_index:ran_index+batch_size] , ys: wafer.label[ran_index:ran_index+batch_size], keep_prob: 0.5},
+                options   = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE),
+                run_metadata = run_metadata
+                )
+        #get timeline for each batch
+        train_writer.add_run_metadata(run_metadata,'step%d' %(i+j*train_data_index))
+        train_writer.add_summary(summary,(i+j*train_data_index))#record summary
+        fetched_timeline = timeline.Timeline(run_metadata.step_stats)
+        chrome_trace = fetched_timeline.generate_chrome_trace_format()
+        many_runs_timeline.update_timeline(chrome_trace)
 
+        if i % RECORD_LAP == 0:
+            test_case =    wafer.img[train_data_index:train_data_index+test_data_offset]
+            test_label = wafer.label[train_data_index:train_data_index+test_data_offset]
 
+            print "epec: %d, step: %d,\taccuracy: %.5f"  %( j,i, compute_accuracy(test_case,test_label  ) )
+            meta_graph_def = tf.train.export_meta_graph(filename=meta_graph_path) 
+            many_runs_timeline.save(timeline_path )
+            print "log done"
+    >>>>>>> e1a479750b6a789e1a0c3c71f6c3cfa99c52cb85
+    ''''
 
     
 train_writer.close()
