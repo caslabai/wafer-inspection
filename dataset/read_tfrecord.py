@@ -28,7 +28,7 @@ def next_batch(num, data, labels):
 
 
 
-record_iterator = tf.python_io.tf_record_iterator(path='/home/franksai/ai/datasets/wafer/tfrecord/LSWMD_sub50.tfrecords')
+record_iterator = tf.python_io.tf_record_iterator(path='./tfrecord/LSWMD_sub50.tfrecords')
 for string_record in record_iterator:
     example = tf.train.Example()
     example.ParseFromString(string_record)
@@ -53,9 +53,7 @@ for string_record in record_iterator:
 
 ID =20
 
-raw_img = wafer.img[ID].reshape(wafer.image_x[ID],wafer.image_
-
-y[ID])
+raw_img = wafer.img[ID].reshape(wafer.image_x[ID],wafer.image_y[ID])
 plt.imshow( raw_img )
 plt.show()
 #print_allresize(raw_img) #print image

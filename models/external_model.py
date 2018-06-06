@@ -10,7 +10,10 @@ import operator
 from random import randint as randint
 
 
-labelList=["Center" ,"Do", "Edge-Loc","Edge-Ring", "Loc", "Ran","Scratch","none","Near"]
+#labelList=["Center" ,"Do", "Edge-Loc","Edge-Ring", "Loc", "Ran","Scratch","none","Near"]
+labelList=['none', 'Loc', 'Edge-Loc', 'Center', 'Edge-Ring', 'Scratch', 'Random', 'Near-full', 'Donut']
+
+
 #===========================================================================================
 
 def print_foo():

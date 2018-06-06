@@ -9,6 +9,12 @@ import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import inception as inception 
 
+from resnet_v1 import resnet_v1_50
+
+
+def resnet(images,OUTPUT_CLASS):
+    logits,_ = resnet_v1_50(images ,num_classes=OUTPUT_CLASS )
+    return logits
 
 def wnet(images,OUTPUT_CLASS):
     net = slim.conv2d(images, 20, [10,10], scope='conv1')

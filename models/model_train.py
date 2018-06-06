@@ -10,23 +10,25 @@ from model_zoo.model_zoo import *
 from external_model import *
 
 wafer = Wafer()
-RESHAPE_LEN=224 #150 #vgg:224   
-OUTPUT_CLASS = 9 # number 1 to 10 data
+RESHAPE_LEN=150 #vgg:224   
 TMP=''#'/TMP/'
-model_name='wnet/' #'wnet/' 'vgg16' 'inception'
-dataset = 'FULL'#'sub7000' #sub7000
-RECORD_LAP=50
+model_name='inception/' #'resnet/' #'wnet/' 'vgg16' 'inception'
+dataset = 'full'#'sub7000' #FULL
+#../dataset/tfrecord/new_LSWMD_full.tfrecords
 epec=100
-train_data_index=10000
-test_data_offset=1000
+train_data_index=70000
 batch_size =16
 
-log_name = model_name + "dropout_%dtraindata_%de_%dbatch_%dinputsize" %( train_data_index,epec,batch_size,RESHAPE_LEN )
+OUTPUT_CLASS = 9 # number 1 to 10 data
+RECORD_LAP=200
+test_data_offset=1000
+
+log_name = model_name + "newset2_sh_dropout_%dtraindata_%de_%dbatch_%dinputsize" %( train_data_index,epec,batch_size,RESHAPE_LEN )
 #meta_graph_path='./logs/train/meta/'+TMP+ log_name+'.meta'
 checkpoint_path='./logs/train/meta/'+TMP+ log_name
 tfevent_path =  './logs/train/tfboard/'+TMP+log_name
 timeline_path = './logs/train/timeline/wnet_'+dataset+'_training.json'
-TFRECORD_PATH = '../dataset/tfrecord/LSWMD_'+dataset+'.tfrecords'
+TFRECORD_PATH = '../dataset/tfrecord/new_LSWMD_'+dataset+'.tfrecords'
 
 config = tf.ConfigProto()
 #config.gpu_options.per_process_gpu_memory_fraction = 0.9
@@ -40,7 +42,7 @@ wafer.shuffle(train_data_index)
 print "Waiting for tenSorflow initial..."
 
 def compute_accuracy(v_xs, v_ys,step):
-    #global prediction
+    global prediction
     #global merged
     y_pre = sess.run(prediction, feed_dict={xs: v_xs, keep_prob: 1})
     v_ys =  np.vstack(v_ys)
@@ -53,16 +55,56 @@ def compute_accuracy(v_xs, v_ys,step):
     #train_writer.add_summary(ac_summary,step)#record summary
     
     return ac_summary, result
-    
+
+def full_accuracy(wafer ):
+    global prediction
+    TEST_BATCH =10
+    total_result=[]
+    nround =len(wafer.img)/TEST_BATCH
+    for i in range(0, nround ):
+        TEST_START = i*TEST_BATCH
+        predict = sess.run(prediction,  feed_dict={xs: wafer.img[TEST_START:TEST_START+ TEST_BATCH] })
+        # trace_level = FULL_TRACE,HARDWARE_TRACE,NO_TRACE,SOFTWARE_TRACE
+        #predict = np.vstack(np.vstack(np.vstack(predict))) #this line for vgg16
+	
+	predict = np.argmax( np.array(predict) ,axis=1)
+	#predict = np.argmax(predict)
+	
+        result=[]
+        for max_arg in wafer.label[TEST_START:TEST_START+TEST_BATCH]:
+            result.append(max_arg.argmax())
+        result =np.array(result)
+	#tmp = ( np.array(result) == predict)
+	
+	#print predict
+	#print ">>--------------"
+	#print result
+        tmp = (result == predict)
+	total_result.append( tmp.mean() )
+
+	if i%2000 == 0:
+    	    print "at step%d, total_accuracy: %.5f r_lenth: %d" %( i*TEST_BATCH ,np.array(total_result).mean() , len(total_result) )
+        
+    train_ac = np.array(total_result[: (train_data_index/TEST_BATCH) ]).mean()
+    test_ac = np.array(total_result[(train_data_index/TEST_BATCH) : nround]).mean()
+
+    print "train accuracy: ",train_ac
+    print "test accuracy:  ",test_ac	
+    return train_ac , test_ac
+
+
+
 #====== network =======================================
+#model_name
 # define placeholder for inputs to network
 xs = tf.placeholder(tf.float32, [None, RESHAPE_LEN, RESHAPE_LEN],name='input_P')   # 28x28
 ys = tf.placeholder(tf.float32, [None, OUTPUT_CLASS])
 keep_prob = tf.placeholder(tf.float32)
 x_image = tf.reshape( xs , [-1, RESHAPE_LEN, RESHAPE_LEN, 1])
 
-netout = wnet( x_image,OUTPUT_CLASS)
-#netout, end_points = inception.inception_v4( x_image,num_classes=OUTPUT_CLASS)
+#netout = wnet( x_image,OUTPUT_CLASS)
+#netout = resnet( x_image,OUTPUT_CLASS)
+netout, end_points = inception.inception_v4( x_image,num_classes=OUTPUT_CLASS)
 prediction = tf.nn.softmax(netout) #tensor name, Softmax:0
 
 
@@ -102,7 +144,9 @@ merged = tf.summary.merge_all()
 step = train_data_index / batch_size
 
 for j in range(epec):
+    #for i in range(train_data_index):
     for i in range(step):
+	#ran_index = i  + randint(0,50)
 	ran_index = i*batch_size#  + randint(0,50)
 	summary, _ = sess.run([merged,train_step],
 		feed_dict = {xs: wafer.sh_img[ran_index:ran_index+batch_size] , ys: wafer.sh_label[ran_index:ran_index+batch_size], keep_prob: 0.5},
@@ -123,7 +167,7 @@ for j in range(epec):
 
 	    _, accu = compute_accuracy(test_case,test_label,i )
 	    ac_sum = tf.Summary(value=[
-	    	tf.Summary.Value(tag="test accuracy", simple_value=accu),
+	    	tf.Summary.Value(tag="rough accuracy", simple_value=accu),
     		#tf.Summary.Value(tag="summary_tag2", simple_value=1),
 	    ])
 
@@ -134,8 +178,21 @@ for j in range(epec):
 	    saver.save(sess, checkpoint_path)
 	    #meta_graph_def = tf.train.export_meta_graph(filename=meta_graph_path) 
 	    #many_runs_timeline.save(timeline_path )
-	    print "log done"
+	    #print "log done"
+    print j, 'epec done'
+    train_ac ,test_ac  = full_accuracy(wafer)
+    test_sum = tf.Summary(value=[
+	    	tf.Summary.Value(tag="test accuracy", simple_value=test_ac),
+    		tf.Summary.Value(tag="train accuracy", simple_value=train_ac),
+	    ])
+    train_writer.add_summary(test_sum,(i+j*step ))#record summary
 
+
+
+
+
+
+    
 train_writer.close()
 
 

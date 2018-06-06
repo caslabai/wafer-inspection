@@ -3,16 +3,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import pickle
-labelList=["Center" ,"Do", "Edge-Loc","Edge-Ring", "Loc", "Ran","Scratch","none","Near"]
+#labelList=["Center" ,"Do", "Edge-Loc","Edge-Ring", "Loc", "Ran","Scratch","none","Near"]
+labelList=['none', 'Loc', 'Edge-Loc', 'Center', 'Edge-Ring', 'Scratch', 'Random', 'Near-full', 'Donut']
 INDEX_START=0
-INDEX_END=7000
-FILE_NAME="_LSWMD_sub7000.tfrecords"
-FILE_NAME_NO_LABEL="_LSWMD_sub7000_NO_label.tfrecords"
+INDEX_END=100000
+FILE_NAME="new_LSWMD_full.tfrecords"
+FILE_NAME_NO_LABEL="new_LSWMD_full_NO_label.tfrecords"
 
 dataset     = pd.read_pickle('LSWMD.pkl')
 #with open('LSWMD.pkl') as f1:
 #   print "loading...,please waitting for few seconds"  
-'''
+
 images      = dataset["waferMap"].iloc[:]  
 labels      = dataset["failureType"].iloc[:].apply(str)
 diesize     = dataset["dieSize"].iloc[:].apply(int)
@@ -22,14 +23,14 @@ images      = dataset["waferMap"].iloc[INDEX_START:INDEX_END]
 labels      = dataset["failureType"].iloc[INDEX_START:INDEX_END].apply(str)
 diesize     = dataset["dieSize"].iloc[INDEX_START:INDEX_END].apply(int)
 trianTestLabel = dataset["dieSize"].iloc[INDEX_START:INDEX_END].apply(str)
-
+'''
 
 #labels=[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2]
 
 def get_num(label):
     index_num = 99
     for i in range(0,9):
-        if labelList[i] in  label:
+        if labelList[i] == label:
             index_num = i
     return index_num 
 
@@ -39,9 +40,21 @@ writer2 = tf.python_io.TFRecordWriter(FILE_NAME_NO_LABEL)
 num = len(labels)
 print "the total account of the samples:",num
 
+names=[]
+
 ilegel_data_count = 0
 for i in range(0,num):
     # build tf record
+    
+    if len(labels[i]) <5:
+  	labels[i] = labels[i].split("'")[0]
+    else:	
+  	labels[i] = labels[i].split("'")[1]
+    
+    #if labels[i] not in names:
+	    #names.append(labels[i])
+    #print "names ",names
+
     tmp_num     = get_num(labels[i])
     tmp_imgraw  = images[i].tobytes()  
     tmp_diesize = diesize[i]
@@ -52,7 +65,7 @@ for i in range(0,num):
 
     if(tmp_num==99):
         
-        print("------------ label ERROR !!! ------------",labels[i],"i: ",i,",size: ",tmp_diesize, "shape:",images[i].shape)
+        #print("------------ label ERROR !!! ------------",labels[i],"i: ",i,",size: ",tmp_diesize, "shape:",images[i].shape)
         
         ilegel_data_count = ilegel_data_count + 1 
         example2 = tf.train.Example(features=tf.train.Features(feature={
@@ -86,7 +99,6 @@ print("labeled percentage: ",float((num-ilegel_data_count)/num) )
 writer1.close()
 writer2.close()
 
-
 '''
 print(images)
 print('--------')
@@ -98,6 +110,7 @@ print('--------')
 img = images[35]
 #print(img)
 print("-----------------")
+
 plt.imshow( img)#.reshape([60, 41]) )
 plt.show()
 
