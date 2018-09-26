@@ -22,7 +22,7 @@ Execute `pkl2tfrecord.py` in `dataset` to build dataset, or use the sub dataset 
 Execute `model_train.py` to start training. But make sure your dataset is place on the right `TRRECORD_PATH`<br>
 Execute `model_restore_wafer.py` can get the trained model to do the final test.<br>
 
-# option
+# Dataset
 if you need full dataset:<br>
 You can download dataset here: https://www.kaggle.com/qingyi/wm811k-wafer-map  <br>
 In the link, is a `.pkl` file.
